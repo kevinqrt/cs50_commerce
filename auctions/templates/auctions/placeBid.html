@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Place Bid</h2>
+    <ul class="list-unstyled">
+        <li>
+            <label> Current Bid: <h2>{{product.price}}€</h2></label>
+        </li> <br>
+        <li>
+            <form action={% url 'placeBid' id=product.id %} method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label> Place your Bid:  </label>
+                <input class="form-control" type="text" name="UserBid" min="0" max="100000" required>
+                <button type="submit" class="btn btn-success">Submit</button>
+                <label>{{Price.price}}</label>
+            </form>
+        </li>
+    </ul>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+label {
+    font-weight: 1000;
+    font-family:arial, "lucida console", sans-serif; /* Schriftart */
+}
+h2 {
+    font-color: blue;
+}
+
+
+#product-description{
+    border: 2px solid gray;
+}
+
+#product-list {
+    border: 2px solid black;
+    display: inline-grid;
+}
+#product-pic {
+
+}
+#product-list li {
+
+}

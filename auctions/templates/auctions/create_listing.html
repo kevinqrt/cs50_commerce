@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h2>Create Listing</h2>
+        <form action= {% url 'create_listing' %} method="POST" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div>
+                <label>Title:</label> <br>
+                <input class="form-control" type="text" name="title" required><br><br>
+            </div>
+            <div>
+                <label>Description:</label> <br>
+                <textarea class="form-control" name="description" rows="4" cols="50" required></textarea> <br><br>
+            </div>
+            <div >
+                <label>Minimum Start Bid:</label> <br>
+                <input class="form-control" type="nubmer" name="minStartBid" required><br><br>
+            </div>
+            <div>
+                <label>Photo URL:</label> <br>
+                <input class="form-control" type="text" name="imageURL" ><br><br>
+            </div>
+            <div>
+                <label>Choose a Category:</label> <br>
+                <select class="form-control" name="category">
+                    <option value="All Categorys">All Categorys</option>
+                    <option value="Car, Bike and Boot">Car, Bike and Boot</option>
+                    <option value="Electronic Devices">Electronic Devices</option>
+                    <option value="Fashion">Fashion</option>
+                </select> <br><br>
+            </div>
+            <div>
+                <label>Expiration date:</label> <br>
+                <input class="form-control" type="datetime-local" name="expiration_date" required> <br><br>
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Submit">
+        </form>
+    {% else %}
+    Please Login first.
+    {% endif %}
+{% endblock %}

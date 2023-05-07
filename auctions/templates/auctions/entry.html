@@ -1,0 +1,125 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div name="ListingClosed">
+        {% if product.closed == True %}
+            <div class="alert alert-danger" role="alert">
+                Listing Closed
+            </div>
+            {% if request.user == product.price.user %}
+            <div class="alert alert-success" role="alert">
+                Hey you win this Listing!
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div name="PlacedBidStatus">
+        {% if BidPlaced %}
+            {% if update %}
+            <div class="alert alert-success" role="alert">
+                Bid placed successfully
+            </div>
+            {% else %}
+            <div class="alert alert-danger" role="alert">
+                Bid failed
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <ul class="list-unstyled">
+        <li>
+            <h2><label>{{product.title}}</label></h2>
+        </li>
+        <li>
+            <img src="{{product.imageURL}}" onerror="this.src='https://t3.ftcdn.net/jpg/04/34/72/82/360_F_434728286_OWQQvAFoXZLdGHlObozsolNeuSxhpr84.jpg'" style="height:400px; width:400px;">
+        </li> <br>
+        <li id="product-description">
+            <label>Description: </label> <br>
+            {{product.description}}
+        </li> <br>
+        <li>
+            {% if product.price is None %}
+            <label>Current Bid:</label> <br>
+                No Bid exists. Minimum Start Bid: <label>{{product.minStartBid}}€</label>
+            {% else %}
+            <label>Current Bid:</label> <br>
+            {{product.price}}€
+            by: {{product.price.user}}
+            {% endif %}
+        </li> <br>
+        <li>
+            <label>Selected Category:</label> <br>
+            {{product.category}}
+        </li> <br>
+        <li>
+            <label>Expiration Date:</label> <br>
+            {{product.expiration_date}}
+        </li> <br>
+        <li>
+            <label>Seller:</label>
+            {{product.owner}}
+        </li> <br>
+        <li>
+            {% if product.closed == True %}
+                <label> Listing Winner:</label>
+                {{product.price.user}}
+            {% endif %}
+        </li> <br>
+        <li>
+            {% if user.is_authenticated and product.closed == False %}
+                {% if isProductinWatchlist%}
+                    <form action="{% url 'REMOVEwatchlist' id=product.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove from Watchlist</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'ADDwatchlist' id=product.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Add to Watchlist</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </li> <br>
+        <li>
+            {% if user.is_authenticated and product.closed == False %}
+                <form action="{% url 'placeBid' id=product.id %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="number" name="Bid">
+                    <button type="submit" class="btn btn-success">Place Bid</button>
+                </form> <br>
+            {% endif %}
+        </li>
+        <li>
+            {% if user.is_authenticated %}
+                {% if seller == product.owner and product.closed == False %}
+                <form action="{% url 'closeListing' id=product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Close Listing</button>
+                </form> <br>
+                {% endif %}
+            {% endif %}
+        </li>
+        <li>
+            {% if user.is_authenticated and product.closed == False %}
+                <form action="{% url 'addComment' id=product.id %}" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="Comment">
+                    <button type="submit" class="btn btn-success">Add Comment</button>
+                </form> <br>
+            {% endif %}
+        </li>
+
+        <ul id="product-list">
+            <label>Comment Section:</label> <br>
+                {% for comment in comments %}
+                    <li>
+                        {{comment.time}} <br>
+                        <label>{{comment.user}}: </label> {{comment.field}}
+                    </li>
+                {% endfor %}
+        </ul>
+
+
+
+{% endblock %}

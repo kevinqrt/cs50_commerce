@@ -1,0 +1,83 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <form action="{% url 'selectCategory' %}" method="post">
+        {% csrf_token %}
+        <label>Filter for a Category:</label> <br>
+        <select class="form-control" name="category">
+            <option value="All Categorys">All Categorys</option>
+            <option value="Car, Bike and Boot">Car, Bike and Boot</option>
+            <option value="Electronic Devices">Electronic Devices</option>
+            <option value="Fashion">Fashion</option>
+        </select>
+        <button type="submit" class="btn btn-success">Select Category</button>
+    </form> <br>
+
+    <label>Filtered category:</label> {{category}}
+
+    <div id="product">
+
+            <ul>
+                {% for product in products%}
+                    <ul id="product-list">
+                        <li>
+                            {% if request.user == product.price.user and product.closed == True %}
+                            <div class="alert alert-success" role="alert">
+                                Hey you win this Listing!
+                            </div>
+                            {% endif %}
+                        </li>
+                        <li id="product-pic">
+                                <img src="{{product.imageURL}}" onerror="this.src='https://t3.ftcdn.net/jpg/04/34/72/82/360_F_434728286_OWQQvAFoXZLdGHlObozsolNeuSxhpr84.jpg'" style="height:400px; width:400px;">
+                        </li> <br>
+                        <li id = "product-title">
+                            <a class="nav-link" href="{% url 'entry' id=product.id %}"><h4>{{product.title}}</h4></a>
+                        </li>
+                        <li>
+                            <label>Beschreibung:</label> <br>
+                            {{product.description}}
+                        </li> <br>
+                        <li>
+                            {% if product.price is None %}
+                            <label>Current Bid:</label>
+                                No Bid exists. Minimum Start Bid: <label>{{product.minStartBid}}€</label>
+                            {% else %}
+                            <label>Current Bid:</label>
+                            {{product.price}}€
+                            by: {{product.price.user}}
+                            {% endif %}
+                        </li>
+                        <li>
+                            <label>Selected Category:</label>
+                            {{product.category}}
+                        </li>
+                        <li>
+                            <label>Expiration Date:</label>
+                            {% if product.closed == True %}
+                                <div class="alert alert-danger" role="alert">
+                                    Listing Closed Since: <label font-weight="3">{{product.expiration_date}}</label>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success" role="alert">
+                                    Listing Active Until: <label font-weight="3">{{product.expiration_date}}</label>
+                                </div>
+                            {% endif %}
+                        </li>
+                        <li>
+                            <label>Seller:</label>
+                            {{product.owner}}
+                        </li>
+                        <li>
+                            {% if product.closed == True %}
+                                <label>Listing Winner:</label>
+                                {{product.price.user}}
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </ul>
+
+    </div>
+{% endblock %}
